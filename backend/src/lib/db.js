@@ -3,6 +3,9 @@ import { ENV } from "./env.js" //get our ENV object >> as env.js is a local file
 
 export const connectDB = async () => {
     try {
+        if (!ENV.DB_URL) {
+            throw new Error("DB_URL is not defined in environment variables");
+        }
         const conn = await mongoose.connect(ENV.DB_URL)
         console.log("connected to mongodb:", conn.connection.host)
     } catch (error) {
