@@ -5,6 +5,8 @@ import { serve } from "inngest/express";
 
 import { ENV } from "./lib/env.js";
 import { connectDB } from "./lib/db.js";
+import { inngest, functions } from "./lib/inngest.js";
+
 // create an app
 const app = express();
 
@@ -15,7 +17,7 @@ app.use(express.json());
 // credentials:true meaning?? => server allows a browser to send cookies on request
 app.use(cors({ origin: ENV.CLIENT_URL, credentials: true }));
 
-app.use("/api/inngest", serve({ client: inngest, functions }))
+app.use("/api/inngest", serve({ client: inngest, functions }));
 
 // create a route
 app.get("/health", (req, res) => {
@@ -24,6 +26,10 @@ app.get("/health", (req, res) => {
 
 app.get("/books", (req, res) => {
     res.status(200).json({ msg: "this is the books endpoint" });
+});
+
+app.get("cd", (req, res) => {
+    res.status(200).json({ msg: "video call endpoint" });
 });
 
 
@@ -37,6 +43,14 @@ if (ENV.NODE_ENV === "production") {
 
 
 // listen to a port
-app.listen(ENV.PORT, () => {
-    console.log("Server is running on port", ENV.PORT);
-});
+const startServer = async () => {
+    try {
+        await connectDB(); // This connects to the database first
+        app.listen(ENV.PORT, () => {
+            console.log("Server is running on port", ENV.PORT);
+        });
+    } catch (error) {
+        console.error("Error starting the server", error);
+    }
+};
+startServer();
