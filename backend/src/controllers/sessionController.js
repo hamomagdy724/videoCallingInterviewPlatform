@@ -155,7 +155,7 @@ export async function endSession(req, res) {
         await call.delete({ hard: true });
 
         // delete stream chat channel
-        const channel = charClient.channel("messaging", session.callId);
+        const channel = chatClient.channel("messaging", session.callId);
         await channel.delete();
 
         session.status = "completed";
